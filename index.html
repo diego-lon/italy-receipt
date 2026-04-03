@@ -7,7 +7,7 @@
         function loadGA() {
             const script = document.createElement('script');
             script.async = true;
-            script.src = "https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"; // Replace with your ID
+            script.src = "https://www.googletagmanager.com/gtag/js?id=G-GL6LW6PV31"; // Replace with your ID
             document.head.appendChild(script);
 
             window.dataLayer = window.dataLayer || [];
@@ -614,11 +614,10 @@
             }
 
             doc.setFillColor(252); doc.rect(120, 195, 70, 20, 'F');
-            doc.setFontSize(8); doc.text(labels.bollo, 125, 200); doc.text(`€ ${bolloTot.toFixed(2)}`, 125, 208);
             doc.text(labels.comp, 145, 200); doc.setFontSize(16);
             doc.text(`€ ${netto.toFixed(2)}`, 185, 210, { align: "right" });
 
-            doc.save(`ItalyReceipt_${document.getElementById('numero').value}.pdf`);
+            doc.save(`Ritenuta d'acconto ${document.getElementById('numero').value}.pdf`);
         }
         function handleConsent(choice) {
             localStorage.setItem('cookie_consent', choice);
