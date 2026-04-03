@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script>
+        // This function only runs if the user has accepted cookies
+        function loadGA() {
+            const script = document.createElement('script');
+            script.async = true;
+            script.src = "https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"; // Replace with your ID
+            document.head.appendChild(script);
+
+            window.dataLayer = window.dataLayer || [];
+            function gtag() { dataLayer.push(arguments); }
+            gtag('js', new Date());
+            gtag('config', 'G-XXXXXXXXXX', { 'anonymize_ip': true }); // Mandatory in Italy
+        }
+
+        // Check if they previously accepted
+        window.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('cookie_consent') === 'accepted') {
+                loadGA();
+            } else if (!localStorage.getItem('cookie_consent')) {
+                document.getElementById('cookieBanner').classList.remove('hidden');
+            }
+        });
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ItalyReceipt - Italian Freelance Receipt Generator (2026)</title>
+    <meta name="description"
+        content="Generate 100% compliant 'Prestazione Occasionale' receipts (Ritenuta d'Acconto) for Italian clients. No VAT number required. Privacy-first, local generation.">
+    <meta name="keywords"
+        content="Italy Receipt, Ritenuta d'Acconto, Prestazione Occasionale Generator, Italian Freelance Invoice, No VAT number receipt">
+
+    <meta property="og:title" content="ItalyReceipt - Professional Receipt Generator">
+    <meta property="og:description"
+        content="The standard tool for freelancers invoicing Italian companies without a VAT number.">
+    <meta property="og:type" content="website">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+
+        :root {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .bg-global {
+            background-color: #f8fafc;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%232563EB' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .bmc-btn-container {
+            margin-top: 1.5rem;
+            display: flex;
+            justify-content: center;
+            transition: transform 0.2s ease;
+        }
+
+        .bmc-btn-container:hover {
+            transform: translateY(-2px);
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Modal Styles */
+        #policyModal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(4px);
+        }
+    </style>
+</head>
+
+<body class="bg-global text-slate-900">
+
+    <div class="max-w-6xl mx-auto px-4 py-12">
+        <header class="text-center mb-16">
+            <div
+                class="inline-block bg-blue-50 text-blue-700 text-[10px] font-black px-4 py-1.5 rounded-full uppercase mb-4 tracking-widest border border-blue-100">
+                2026 Compliance • Art. 5 DPR 633/72
+            </div>
+
+            <h1 class="text-6xl md:text-8xl font-black text-slate-900 tracking-tighter mb-6 italic">
+                Italy<span class="text-blue-600 font-light not-italic">Receipt</span>
+            </h1>
+
+            <p class="text-slate-500 text-lg md:text-2xl max-w-3xl mx-auto font-medium leading-tight">
+                No VAT number? <span
+                    class="text-slate-900 underline decoration-blue-500 decoration-4 underline-offset-4 font-bold">No
+                    problem.</span><br>
+                Create a legally-compliant <span class="text-slate-900 font-bold italic">Prestazione Occasionale</span>
+                receipt and get paid by your Italian clients in seconds.
+            </p>
+        </header>
+
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+
+            <div class="lg:col-span-7">
+                <div class="bg-white p-8 md:p-10 rounded-[3rem] shadow-2xl border border-slate-100">
+                    <h2 class="text-2xl font-black mb-8 flex items-center gap-3">
+                        <span class="w-2 h-8 bg-blue-600 rounded-full"></span>
+                        Create your Receipt
+                    </h2>
+
+                    <div class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div class="md:col-span-2">
+                                <label
+                                    class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 italic">Sender
+                                    Details (You)</label>
+                                <textarea id="mittente" placeholder="Full Name - Address - Tax ID" rows="2"
+                                    class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-blue-500 outline-none transition"></textarea>
+                            </div>
+                            <div class="md:col-span-2">
+                                <label
+                                    class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 italic">Client
+                                    Details (Italian Company)</label>
+                                <textarea id="destinatario" placeholder="Company Name - P.IVA - Address" rows="2"
+                                    class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-blue-500 outline-none transition"></textarea>
+                            </div>
+                            <div>
+                                <label
+                                    class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Receipt
+                                    Number</label>
+                                <input type="text" id="numero" placeholder="e.g. 01/2026"
+                                    class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl outline-none">
+                            </div>
+                            <div>
+                                <label
+                                    class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Issue
+                                    Date</label>
+                                <input type="date" id="data"
+                                    class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl outline-none">
+                            </div>
+                        </div>
+
+                        <div class="pt-6 border-t border-slate-100">
+                            <label
+                                class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 italic">Work
+                                Description</label>
+                            <input type="text" id="descrizione" placeholder="Consulting Services"
+                                class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl outline-none focus:border-blue-500 transition">
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div>
+                                <label
+                                    class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Payment
+                                    Method <span class="text-blue-400">(Optional)</span></label>
+                                <input type="text" id="metodoPagamento" placeholder="Bank Transfer (IBAN...)"
+                                    class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl outline-none">
+                            </div>
+                            <div>
+                                <label
+                                    class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Stamp
+                                    ID <span class="text-blue-400">(Optional)</span></label>
+                                <input type="text" id="bolloID" placeholder="14-digit number"
+                                    class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl outline-none">
+                                <div class="mt-3 hidden" id="bolloChargeDiv">
+                                    <label class="flex items-center gap-2 cursor-pointer">
+                                        <input type="checkbox" id="chargeBollo"
+                                            class="w-4 h-4 text-blue-600 bg-slate-50 border-slate-300 rounded focus:ring-blue-500">
+                                        <span
+                                            class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Charge
+                                            €2 Stamp to Client</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div>
+                                <label
+                                    class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Tax
+                                    Rate (%)</label>
+                                <select id="percentuale" onchange="toggleCustomTax()"
+                                    class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl outline-none font-bold text-blue-600 appearance-none">
+                                    <option value="0.20">20% - Standard (Non-residents)</option>
+                                    <option value="0.30">30% - Special (Foreigners)</option>
+                                    <option value="0.15">15% - Professional</option>
+                                    <option value="0.05">5% - Minimum Regime</option>
+                                    <option value="0.00">0% - Exempt</option>
+                                    <option value="custom">Manual (Enter value...)</option>
+                                </select>
+                                <div id="customTaxDiv" class="hidden mt-3">
+                                    <input type="number" id="customTaxInput" placeholder="Enter % (e.g. 10)"
+                                        class="w-full p-3 bg-white border-2 border-blue-200 rounded-xl outline-none text-blue-600 font-bold">
+                                </div>
+                            </div>
+                            <div>
+                                <label
+                                    class="block text-[10px] font-black text-blue-600 uppercase tracking-widest mb-2 italic">Gross
+                                    Amount (€)</label>
+                                <input type="number" id="lordo" placeholder="0.00"
+                                    class="w-full p-4 bg-blue-50 border-2 border-blue-600 rounded-2xl text-3xl font-black text-blue-700 outline-none">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-5">
+                <div class="sticky top-10">
+                    <div class="bg-white rounded-[2.5rem] p-8 border border-slate-200 shadow-xl">
+                        <div class="flex justify-between items-start mb-6">
+                            <div
+                                class="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center text-white font-black text-xs">
+                                PDF</div>
+                            <div class="text-right">
+                                <p class="text-[10px] font-black uppercase text-slate-400">Preview</p>
+                                <p id="prevNum" class="text-xs font-bold">#___</p>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4 mb-6 border-t border-slate-100 pt-6">
+                            <p id="pSender" class="text-[10px] font-bold text-slate-800 truncate">---</p>
+                            <p class="text-[9px] text-slate-400 font-bold uppercase italic">Billing To:</p>
+                            <p id="pClient" class="text-[10px] font-bold text-slate-800 truncate">---</p>
+                        </div>
+
+                        <div class="border-y border-slate-200 py-4 mb-6">
+                            <div class="flex justify-between text-xs mb-2">
+                                <span class="text-slate-400 font-bold">GROSS:</span>
+                                <span id="prevLordo" class="font-bold">€ 0.00</span>
+                            </div>
+                            <div class="flex justify-between text-xs mb-2 text-red-500">
+                                <span class="font-bold">WITHHOLDING:</span>
+                                <span id="prevRitenuta" class="font-bold">- € 0.00</span>
+                            </div>
+                            <div id="prevBolloRow" class="flex justify-between text-xs mb-2 text-slate-500 hidden">
+                                <span class="font-bold">STAMP DUTY:</span>
+                                <span class="font-bold">+ € 2.00</span>
+                            </div>
+                            <div
+                                class="flex justify-between text-sm pt-2 font-black text-green-600 border-t border-slate-100">
+                                <span>NET TO RECEIVE:</span>
+                                <span id="prevNetto">€ 0.00</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-3">
+                            <button onclick="downloadPDF()"
+                                class="flex-grow bg-slate-900 hover:bg-black text-white font-black py-4 rounded-2xl transition transform active:scale-95 shadow-lg uppercase tracking-widest text-[10px]">
+                                Download PDF
+                            </button>
+                            <div class="flex flex-col gap-1">
+                                <label class="text-[8px] font-bold text-slate-400 uppercase text-center">PDF
+                                    Lang</label>
+                                <select id="pdfLang"
+                                    class="bg-slate-100 border border-slate-200 rounded-xl px-2 py-3 text-xs font-bold outline-none cursor-pointer -mt-[17px]">
+                                    <option value="it">🇮🇹 IT</option>
+                                    <option value="en">🇬🇧 EN</option>
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="bmc-btn-container">
+                        <script type="text/javascript" src="https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js"
+                            data-name="bmc-button" data-slug="diegoalzh" data-color="#2563EB" data-emoji="☕"
+                            data-font="Cookie" data-text="Enjoyed this? Buy me a coffee" data-outline-color="#000000"
+                            data-font-color="#ffffff" data-coffee-color="#FFDD00">
+                            </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div
+        class="max-w-4xl mx-auto mb-12 mt-12 bg-white/80 backdrop-blur rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between border border-blue-100 shadow-sm gap-4">
+        <div class="flex items-center gap-4 text-center md:text-left">
+            <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-green-600">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+            </div>
+            <div>
+                <h4 class="text-xs font-black uppercase tracking-widest text-slate-900">Privacy Guaranteed</h4>
+                <p class="text-[10px] font-bold text-slate-400 italic">Data processed locally. Nothing is stored on
+                    our servers.</p>
+            </div>
+        </div>
+        <button onclick="togglePolicy()"
+            class="text-[10px] font-black uppercase tracking-widest text-blue-600 hover:text-blue-800 transition">View
+            Privacy & Cookie Policy</button>
+    </div>
+
+    <section class="w-full bg-white border-t border-slate-200 mt-32 py-24">
+        <div class="max-w-4xl mx-auto px-6">
+
+            <div class="mb-20 p-10 bg-slate-50 rounded-[3rem] border border-slate-100">
+                <h2 class="text-3xl font-black text-slate-900 mb-6 italic tracking-tight">The Expat Guide: Why use this
+                    tool?</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div>
+                        <p class="text-blue-600 font-black text-xl mb-2">0€</p>
+                        <p class="text-sm font-bold text-slate-900 uppercase tracking-wider mb-2">Zero Costs</p>
+                        <p class="text-xs text-slate-500">No hidden fees or "premium" exports. Designed for freelancers
+                            and digital nomads navigating the Italian system.</p>
+                    </div>
+                    <div>
+                        <p class="text-blue-600 font-black text-xl mb-2">Privacy</p>
+                        <p class="text-sm font-bold text-slate-900 uppercase tracking-wider mb-2">Local Generation</p>
+                        <p class="text-xs text-slate-500">Your sensitive data (Codice Fiscale, Address) never leaves
+                            your computer. We process everything locally in-browser.</p>
+                    </div>
+                    <div>
+                        <p class="text-blue-600 font-black text-xl mb-2">2026</p>
+                        <p class="text-sm font-bold text-slate-900 uppercase tracking-wider mb-2">Updated Law</p>
+                        <p class="text-xs text-slate-500">Fully compliant with the latest Italian Budget Law (Legge di
+                            Bilancio) requirements for occasional work.</p>
+                    </div>
+                </div>
+            </div>
+
+            <h2 class="text-4xl md:text-5xl font-black text-slate-900 mb-10 italic tracking-tighter">
+                Mastering the "Prestazione Occasionale" in Italy
+            </h2>
+
+            <div class="prose prose-slate prose-lg max-w-none text-slate-500 space-y-8">
+                <p>If you are an expat or a foreign resident in Italy, the <strong>Ritenuta d'Acconto</strong>
+                    (Withholding Tax) is your gateway to legal earnings without the overhead of a VAT number (Partita
+                    IVA). It is the standard way to get paid for "spot" jobs, such as consulting, teaching, or creative
+                    services.</p>
+
+                <h3 class="text-2xl font-bold text-slate-800">1. Eligibility: Can you use this?</h3>
+                <p>To use this regime legally under <strong>Art. 67 del TUIR</strong>, your work must be
+                    <em>occasional</em>—meaning it lacks "habituality." If you perform the same task every day for the
+                    same client, the authorities may expect you to open a Partita IVA. However, for one-off projects or
+                    sporadic collaborations, this is the perfect legal shortcut.
+                </p>
+
+                <h3 class="text-2xl font-bold text-slate-800">2. The €5,000 "Exemption" Limit</h3>
+                <p>As long as your total annual income from occasional work stays below <strong>€5,000 (Gross)</strong>,
+                    you do not need to pay social security contributions (INPS).
+                    <span class="text-slate-900 font-semibold">Important:</span> If you exceed this limit, you must
+                    register for the <em>Gestione Separata INPS</em>, which involves an additional tax of roughly 33%,
+                    usually split between you and the client.
+                </p>
+
+                <div class="my-10 overflow-hidden border border-slate-200 rounded-2xl">
+                    <table class="min-w-full divide-y divide-slate-200">
+                        <thead class="bg-slate-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-bold text-slate-500 uppercase">Residency
+                                    Status</th>
+                                <th class="px-6 py-3 text-left text-xs font-bold text-slate-500 uppercase">Tax Rate</th>
+                                <th class="px-6 py-3 text-left text-xs font-bold text-slate-500 uppercase">Role of
+                                    Client</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200 text-sm">
+                            <tr>
+                                <td class="px-6 py-4 font-medium text-slate-900">Italian Residents</td>
+                                <td class="px-6 py-4">20%</td>
+                                <td class="px-6 py-4">Client pays tax for you (Sostituto d'Imposta)</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 font-medium text-slate-900">Non-Residents</td>
+                                <td class="px-6 py-4">30%</td>
+                                <td class="px-6 py-4">Fixed rate for services rendered in Italy</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3 class="text-2xl font-bold text-slate-800">3. The €2.00 "Marca da Bollo" Rule</h3>
+                <p>If your invoice/receipt is for an amount greater than <strong>€77.47</strong>, Italian law requires a
+                    €2.00 revenue stamp (Marca da Bollo).
+                    <br><br>
+                    <strong>How to do it:</strong> Buy the stamp at any <em>Tabaccheria</em>. The date on the stamp
+                    <strong>must</strong> be the same or earlier than the date on your receipt. Use our generator to
+                    input the ID code from the stamp to make it official.
+                </p>
+
+                <h3 class="text-2xl font-bold text-slate-800">4. Working for Non-Italian Clients</h3>
+                <p>If your client is located <strong>outside of Italy</strong> (e.g., a US or UK company), they cannot
+                    act as a "Sostituto d'Imposta." This means you will receive 100% of the gross amount. However, you
+                    are still legally required to declare this income in your Italian tax return (Modello Redditi) and
+                    pay the relevant IRPEF taxes later.</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-10">
+                    <div class="bg-blue-50 p-8 rounded-3xl border border-blue-100">
+                        <h4 class="font-black text-blue-700 uppercase text-xs mb-2 tracking-widest">Codice Fiscale</h4>
+                        <p class="text-sm leading-relaxed">You must have a valid Italian Tax Code to issue this
+                            document. This is your primary identifier for the <strong>Agenzia delle Entrate</strong>.
+                        </p>
+                    </div>
+                    <div class="bg-amber-50 p-8 rounded-3xl border border-amber-100">
+                        <h4 class="font-black text-amber-700 uppercase text-xs mb-2 tracking-widest">Tax Deadlines</h4>
+                        <p class="text-sm leading-relaxed">Collect your <strong>Certificazione Unica (CU)</strong> from
+                            clients every March to prove taxes were paid on your behalf.</p>
+                    </div>
+                </div>
+
+                <h3 class="text-2xl font-bold text-slate-800">5. Why Professional Phrasing Matters</h3>
+                <p>Italian accounting departments are notoriously strict. If your receipt lacks the specific reference
+                    to <strong>"Esclusione IVA art. 5 DPR 633/72"</strong>, they will likely reject it. Our tool
+                    automatically injects all the mandatory legal jargon to ensure you get paid on time, every time.</p>
+            </div>
+        </div>
+    </section>
+
+    <div id="policyModal">
+        <div
+            class="max-w-2xl mx-auto mt-20 bg-white rounded-[3rem] p-10 shadow-2xl relative max-h-[80vh] overflow-y-auto">
+            <button onclick="togglePolicy()"
+                class="absolute top-8 right-8 text-slate-400 hover:text-slate-900 transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+            <h2 class="text-3xl font-black text-slate-900 mb-6 italic">Privacy & Cookie Policy</h2>
+            <div class="text-sm text-slate-500 space-y-4 leading-relaxed">
+                <p><strong>1. Data Processing:</strong> ItalyReceipt is a client-side tool. This means all data you
+                    enter (name, address, tax ID) is processed exclusively by your own browser. We do not store, view,
+                    or transmit your financial data to any external server.</p>
+                <p><strong>2. Cookies & Analytics:</strong> We use <strong>localStorage</strong> to remember your
+                    professional details on your device. If you provide consent via our banner, we use
+                    <strong>Google Analytics (GA4)</strong> with IP anonymization to collect anonymous usage data to
+                    improve the tool. We do not use advertising or marketing cookies.
+                </p>
+                <p><strong>3. Third-Party Services:</strong> We use jsPDF for PDF generation (local) and Tailwind CSS
+                    (CDN). If you choose to "Buy Me a Coffee," you will be redirected to their platform which has its
+                    own privacy policy.</p>
+                <p><strong>4. GDPR Compliance:</strong> We follow "Privacy by Design." Your sensitive financial data
+                    never leaves your device. We only activate analytical tracking after your explicit consent, which
+                    you can revoke at any time via the link in the footer.</p>
+            </div>
+            <button onclick="togglePolicy()"
+                class="mt-8 w-full bg-blue-600 text-white font-black py-4 rounded-2xl uppercase tracking-widest text-xs shadow-lg shadow-blue-200">Close</button>
+        </div>
+    </div>
+
+    <footer
+        class="py-12 text-center text-slate-300 text-[10px] font-black uppercase tracking-[0.5em] border-t border-slate-100 bg-white">
+        Italy Receipt • 2026 <br>
+        <button onclick="localStorage.removeItem('cookie_consent'); location.reload();"
+            class="mt-4 opacity-50 hover:opacity-100 underline tracking-normal lowercase font-normal">Reset Cookie
+            Preferences</button>
+    </footer>
+
+    <script>
+        const inputs = ['lordo', 'percentuale', 'customTaxInput', 'numero', 'mittente', 'destinatario', 'descrizione', 'bolloID', 'metodoPagamento', 'data'];
+
+        // Modal Toggle
+        function togglePolicy() {
+            const modal = document.getElementById('policyModal');
+            modal.style.display = (modal.style.display === 'block') ? 'none' : 'block';
+        }
+
+        // Auto-load data from localStorage
+        window.onload = () => {
+            ['mittente', 'destinatario', 'metodoPagamento'].forEach(id => {
+                const savedValue = localStorage.getItem('italyReceipt_' + id);
+                if (savedValue) document.getElementById(id).value = savedValue;
+            });
+            document.getElementById('data').valueAsDate = new Date();
+            updatePreview();
+        };
+
+        inputs.forEach(id => {
+            document.getElementById(id).addEventListener('input', () => {
+                // Auto-save specific fields
+                if (['mittente', 'destinatario', 'metodoPagamento'].includes(id)) {
+                    localStorage.setItem('italyReceipt_' + id, document.getElementById(id).value);
+                }
+                updatePreview();
+            });
+        });
+
+        function toggleCustomTax() {
+            const select = document.getElementById('percentuale');
+            document.getElementById('customTaxDiv').classList.toggle('hidden', select.value !== 'custom');
+            updatePreview();
+        }
+
+        function getActiveTax() {
+            const select = document.getElementById('percentuale');
+            return select.value === 'custom' ? (parseFloat(document.getElementById('customTaxInput').value) || 0) / 100 : parseFloat(select.value);
+        }
+
+        function updatePreview() {
+            const lordo = parseFloat(document.getElementById('lordo').value) || 0;
+            const needsBollo = lordo > 77.47;
+            document.getElementById('bolloChargeDiv').classList.toggle('hidden', !needsBollo);
+
+            const chargeBollo = needsBollo && document.getElementById('chargeBollo').checked;
+            const bolloToCharge = chargeBollo ? 2.00 : 0;
+
+            const perc = getActiveTax();
+            const ritenuta = lordo * perc;
+            const netto = lordo - ritenuta + bolloToCharge;
+
+            document.getElementById('prevLordo').innerText = `€ ${lordo.toLocaleString('it-IT', { minimumFractionDigits: 2 })}`;
+            document.getElementById('prevRitenuta').innerText = `- € ${ritenuta.toLocaleString('it-IT', { minimumFractionDigits: 2 })}`;
+
+            const bolloRow = document.getElementById('prevBolloRow');
+            if (chargeBollo) {
+                bolloRow.classList.remove('hidden');
+            } else {
+                bolloRow.classList.add('hidden');
+            }
+
+            document.getElementById('prevNetto').innerText = `€ ${netto.toLocaleString('it-IT', { minimumFractionDigits: 2 })}`;
+            document.getElementById('prevNum').innerText = `#${document.getElementById('numero').value || '___'}`;
+            document.getElementById('pSender').innerText = document.getElementById('mittente').value || '---';
+            document.getElementById('pClient').innerText = document.getElementById('destinatario').value || '---';
+        }
+
+        async function downloadPDF() {
+            // Track Download Event in GA4
+            if (typeof gtag === 'function') {
+                gtag('event', 'generate_pdf', {
+                    'currency': 'EUR',
+                    'value': parseFloat(document.getElementById('lordo').value) || 0
+                });
+            }
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const lang = document.getElementById('pdfLang').value;
+
+            const lordo = parseFloat(document.getElementById('lordo').value) || 0;
+            const needsBollo = lordo > 77.47;
+            const chargeBollo = needsBollo && document.getElementById('chargeBollo').checked;
+            const bolloToCharge = chargeBollo ? 2.00 : 0;
+            const bolloTot = needsBollo ? 2.00 : 0;
+
+            const perc = getActiveTax();
+            const ritenuta = lordo * perc;
+            const netto = lordo - ritenuta + bolloToCharge;
+            const payVal = document.getElementById('metodoPagamento').value.trim();
+            const bolloVal = document.getElementById('bolloID').value.trim();
+
+            const labels = {
+                it: { nr: "Ricevuta nr.", del: "del", prestatore: "DATI PRESTATORE", committente: "DESTINATARIO", desc: "DESCRIZIONE", importo: "IMPORTO", ritenuta: "Ritenuta d'acconto", bolloCharge: "Rivalsa Marca da Bollo", bollo: "BOLLO", comp: "COMPENSO RICEVUTO", statement: "Dichiaro di aver ricevuto la somma sotto indicata quale compenso per prestazione occasionale eseguita per lo svolgimento del lavoro specificato:", footer: "- prestazione occasionale non professionale;\n- entro la franchigia di € 5.000;\n- fuori campo IVA (Art. 5 DPR 633/72).", pay: "Pagamento:", bolloID: "ID MARCA DA BOLLO:" },
+                en: { nr: "Receipt no.", del: "date", prestatore: "SENDER DETAILS", committente: "RECIPIENT", desc: "DESCRIPTION", importo: "AMOUNT", ritenuta: "Withholding tax", bolloCharge: "Stamp Duty Charge", bollo: "STAMP", comp: "NET RECEIVED", statement: "I declare to have received the sum indicated below as compensation for occasional performance carried out for the following work:", footer: "- occasional non-professional performance;\n- within the € 5,000 threshold;\n- exempt from VAT (Art. 5 DPR 633/72).", pay: "Pagamento:", bolloID: "STAMP ID:" }
+            }[lang];
+
+            doc.setFontSize(8); doc.setTextColor(150);
+            doc.text(labels.nr, 140, 20); doc.text(labels.del, 175, 20);
+            doc.setFontSize(12); doc.setTextColor(0); doc.setFont("helvetica", "bold");
+            doc.text(document.getElementById('numero').value || "1", 140, 28);
+            doc.text(document.getElementById('data').value || "---", 175, 28);
+
+            doc.setFontSize(8); doc.setTextColor(150);
+            doc.text(labels.prestatore, 20, 45); doc.text(labels.committente, 110, 45);
+            doc.setFontSize(10); doc.setTextColor(0); doc.setFont("helvetica", "normal");
+            doc.text(doc.splitTextToSize(document.getElementById('mittente').value, 70), 20, 52);
+            doc.setFont("helvetica", "bold");
+            doc.text(doc.splitTextToSize(document.getElementById('destinatario').value, 80), 110, 52);
+
+            doc.setFont("helvetica", "normal"); doc.setFontSize(9);
+            doc.text(doc.splitTextToSize(labels.statement, 170), 20, 85);
+
+            doc.setFillColor(245); doc.rect(20, 95, 170, 8, 'F');
+            doc.setFont("helvetica", "bold"); doc.text(labels.desc, 25, 100); doc.text(labels.importo, 185, 100, { align: "right" });
+            doc.setFont("helvetica", "normal");
+            doc.text(document.getElementById('descrizione').value || "Work", 25, 110);
+            doc.text(`€ ${lordo.toFixed(2)}`, 185, 110, { align: "right" });
+
+            doc.text(`${labels.ritenuta} ${(perc * 100).toFixed(0)}%`, 25, 130);
+            doc.text(`- € ${ritenuta.toFixed(2)}`, 185, 130, { align: "right" });
+
+            if (chargeBollo) {
+                doc.text(labels.bolloCharge, 25, 140);
+                doc.text(`+ € 2.00`, 185, 140, { align: "right" });
+            }
+
+            doc.line(20, 150, 190, 150);
+            doc.setFontSize(7); doc.text(doc.splitTextToSize(labels.footer, 100), 20, 160);
+
+            if (payVal) {
+                doc.setFontSize(8); doc.setFont("helvetica", "normal"); doc.text(labels.pay, 125, 160);
+                doc.setFont("helvetica", "bold"); doc.text(payVal, 125, 165);
+            }
+            if (bolloVal) {
+                doc.setFontSize(8); doc.setFont("helvetica", "normal"); doc.text(labels.bolloID, 125, 175);
+                doc.setFont("helvetica", "bold"); doc.text(bolloVal, 125, 180);
+            }
+
+            doc.setFillColor(252); doc.rect(120, 195, 70, 20, 'F');
+            doc.setFontSize(8); doc.text(labels.bollo, 125, 200); doc.text(`€ ${bolloTot.toFixed(2)}`, 125, 208);
+            doc.text(labels.comp, 145, 200); doc.setFontSize(16);
+            doc.text(`€ ${netto.toFixed(2)}`, 185, 210, { align: "right" });
+
+            doc.save(`ItalyReceipt_${document.getElementById('numero').value}.pdf`);
+        }
+        function handleConsent(choice) {
+            localStorage.setItem('cookie_consent', choice);
+            document.getElementById('cookieBanner').classList.add('hidden');
+            if (choice === 'accepted') {
+                loadGA();
+            }
+        }
+    </script>
+</body>
+<div id="cookieBanner"
+    class="hidden fixed bottom-6 left-6 right-6 md:left-auto md:w-96 bg-white border border-slate-200 shadow-2xl rounded-[2rem] p-6 z-[200] animate-bounce-subtle">
+    <h4 class="text-xs font-black uppercase tracking-widest text-slate-900 mb-2">Cookie Settings</h4>
+    <p class="text-[10px] font-bold text-slate-500 mb-4 leading-relaxed">
+        We use anonymous analytics to improve this tool. Your financial data stays local.
+    </p>
+    <div class="flex gap-2">
+        <button onclick="handleConsent('accepted')"
+            class="flex-1 bg-blue-600 text-white text-[10px] font-black py-3 rounded-xl uppercase tracking-widest hover:bg-blue-700 transition">Accept</button>
+        <button onclick="handleConsent('rejected')"
+            class="flex-1 bg-slate-100 text-slate-600 text-[10px] font-black py-3 rounded-xl uppercase tracking-widest hover:bg-slate-200 transition">Reject</button>
+    </div>
+</div>
+
+</html>
