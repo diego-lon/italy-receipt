@@ -2,130 +2,20 @@
 <html lang="en">
 
 <head>
-    <meta name="robots" content="index, follow">
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8915017764609053"
-        crossorigin="anonymous"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
-
-        gtag('consent', 'default', {
-            'ad_storage': 'denied',
-            'ad_user_data': 'denied',
-            'ad_personalization': 'denied',
-            'analytics_storage': 'denied',
-            'wait_for_update': 500
-        });
-
-        const script = document.createElement('script');
-        script.async = true;
-        script.src = "https://www.googletagmanager.com/gtag/js?id=G-GL6LW6PV31";
-        document.head.appendChild(script);
-
-        gtag('js', new Date());
-        gtag('config', 'G-GL6LW6PV31', { 'anonymize_ip': true });
-
-        window.addEventListener('DOMContentLoaded', () => {
-            const consent = localStorage.getItem('cookie_consent');
-            if (consent === 'accepted') {
-                updateConsent('granted');
-            } else if (consent === 'rejected') {
-            } else {
-                document.getElementById('cookieBanner').classList.remove('hidden');
-            }
-        });
-    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>ItalyReceipt | No-VAT & Ritenuta d'Acconto Generator (2026)</title>
-    <meta name="description"
-        content="Generate legally-compliant Italian receipts (Prestazione Occasionale) for 2026. No Partita IVA (VAT) required. Perfect for English tutors, remote developers, and digital nomads invoicing Italian or US/UK companies.">
-    <meta name="keywords"
-        content="English teacher no vat italy receipt, teaching English in Italy tax, freelance developer italy no partita iva, translator receipt italy, Ritenuta d'Acconto template 2026, Prestazione Occasionale for foreigners, Italy Digital Nomad Visa tax, 5000 euro limit Italy, invoicing US company from Italy">
-    <meta name="author" content="ItalyReceipt">
-    <meta name="robots" content="index, follow">
-    <meta name="google-adsense-account" content="ca-pub-8915017764609053">
-    <meta property="og:title" content="ItalyReceipt - Professional Receipt Generator">
-    <meta property="og:description"
-        content="The standard tool for freelancers invoicing Italian companies without a VAT number.">
-    <meta property="og:type" content="website">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8915017764609053"
+        crossorigin="anonymous"></script>
 
-        :root {
-            scroll-behavior: smooth;
-        }
+    <script src="js/analytics.js" defer></script>
+    <script src="js/script.js" defer></script>
 
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        .bg-global {
-            background-color: #f8fafc;
-            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%232563EB' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-        }
-
-        .bmc-btn-container {
-            margin-top: 1.5rem;
-            display: flex;
-            justify-content: center;
-            transition: transform 0.2s ease;
-        }
-
-        .bmc-btn-container:hover {
-            transform: translateY(-2px);
-        }
-
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #f1f5f9;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 10px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
-        }
-
-        /* Modal Styles */
-        #policyModal {
-            display: none;
-            position: fixed;
-            z-index: 100;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(15, 23, 42, 0.8);
-            backdrop-filter: blur(4px);
-        }
-    </style>
-    <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
-  "name": "ItalyReceipt",
-  "operatingSystem": "Web",
-  "applicationCategory": "FinanceApplication",
-  "offers": {
-    "@type": "Offer",
-    "price": "0",
-    "priceCurrency": "EUR"
-  },
-  "description": "Free tool to generate Italian Prestazione Occasionale receipts (Ritenuta d'Acconto) without a VAT number. Updated for 2026."
-}
-</script>
+    <link rel="stylesheet" href="style/style.css">
+    <script type="application/ld+json">...</script>
 </head>
 
 <body class="bg-global text-slate-900">
@@ -298,7 +188,7 @@
                         </div>
 
                         <div class="flex items-center gap-3">
-                            <button onclick="downloadPDF()"
+                            <button id="downloadBtn"
                                 class="flex-grow bg-slate-900 hover:bg-black text-white font-black py-4 rounded-2xl transition transform active:scale-95 shadow-lg uppercase tracking-widest text-[10px]">
                                 Download PDF
                             </button>
@@ -676,172 +566,8 @@
     </footer>
 
     <script>
-        const inputs = ['lordo', 'percentuale', 'customTaxInput', 'numero', 'mittente', 'destinatario', 'descrizione', 'bolloID', 'metodoPagamento', 'data'];
 
-        // Modal Toggle
-        function togglePolicy() {
-            const modal = document.getElementById('policyModal');
-            modal.style.display = (modal.style.display === 'block') ? 'none' : 'block';
-        }
 
-        // Auto-load data from localStorage
-        window.onload = () => {
-            ['mittente', 'destinatario', 'metodoPagamento'].forEach(id => {
-                const savedValue = localStorage.getItem('italyReceipt_' + id);
-                if (savedValue) document.getElementById(id).value = savedValue;
-            });
-            document.getElementById('data').valueAsDate = new Date();
-            updatePreview();
-        };
-
-        inputs.forEach(id => {
-            document.getElementById(id).addEventListener('input', () => {
-                // Auto-save specific fields
-                if (['mittente', 'destinatario', 'metodoPagamento'].includes(id)) {
-                    localStorage.setItem('italyReceipt_' + id, document.getElementById(id).value);
-                }
-                updatePreview();
-            });
-        });
-
-        function toggleCustomTax() {
-            const select = document.getElementById('percentuale');
-            document.getElementById('customTaxDiv').classList.toggle('hidden', select.value !== 'custom');
-            updatePreview();
-        }
-
-        function getActiveTax() {
-            const select = document.getElementById('percentuale');
-            return select.value === 'custom' ? (parseFloat(document.getElementById('customTaxInput').value) || 0) / 100 : parseFloat(select.value);
-        }
-
-        function updatePreview() {
-            const lordo = parseFloat(document.getElementById('lordo').value) || 0;
-            const needsBollo = lordo > 77.47;
-            document.getElementById('bolloChargeDiv').classList.toggle('hidden', !needsBollo);
-
-            const chargeBollo = needsBollo && document.getElementById('chargeBollo').checked;
-            const bolloToCharge = chargeBollo ? 2.00 : 0;
-
-            const perc = getActiveTax();
-            const ritenuta = lordo * perc;
-            const netto = lordo - ritenuta + bolloToCharge;
-
-            document.getElementById('prevLordo').innerText = `€ ${lordo.toLocaleString('it-IT', { minimumFractionDigits: 2 })}`;
-            document.getElementById('prevRitenuta').innerText = `- € ${ritenuta.toLocaleString('it-IT', { minimumFractionDigits: 2 })}`;
-
-            const bolloRow = document.getElementById('prevBolloRow');
-            if (chargeBollo) {
-                bolloRow.classList.remove('hidden');
-            } else {
-                bolloRow.classList.add('hidden');
-            }
-
-            document.getElementById('prevNetto').innerText = `€ ${netto.toLocaleString('it-IT', { minimumFractionDigits: 2 })}`;
-            document.getElementById('prevNum').innerText = `#${document.getElementById('numero').value || '___'}`;
-            document.getElementById('pSender').innerText = document.getElementById('mittente').value || '---';
-            document.getElementById('pClient').innerText = document.getElementById('destinatario').value || '---';
-        }
-
-        async function downloadPDF() {
-            if (typeof gtag === 'function') {
-                gtag('event', 'generate_pdf', {
-                    'event_callback': function () {
-                        console.log('Evento inviato con successo');
-                    },
-                    'currency': 'EUR',
-                    'value': parseFloat(document.getElementById('lordo').value) || 0,
-                    'transport_type': 'beacon'
-                });
-            }
-
-            await new Promise(resolve => setTimeout(resolve, 150));
-
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            const lang = document.getElementById('pdfLang').value;
-
-            const lordo = parseFloat(document.getElementById('lordo').value) || 0;
-            const needsBollo = lordo > 77.47;
-            const chargeBollo = needsBollo && document.getElementById('chargeBollo').checked;
-            const bolloToCharge = chargeBollo ? 2.00 : 0;
-            const bolloTot = needsBollo ? 2.00 : 0;
-
-            const perc = getActiveTax();
-            const ritenuta = lordo * perc;
-            const netto = lordo - ritenuta + bolloToCharge;
-            const payVal = document.getElementById('metodoPagamento').value.trim();
-            const bolloVal = document.getElementById('bolloID').value.trim();
-
-            const labels = {
-                it: { nr: "Ricevuta nr.", del: "del", prestatore: "DATI PRESTATORE", committente: "DESTINATARIO", desc: "DESCRIZIONE", importo: "IMPORTO", ritenuta: "Ritenuta d'acconto", bolloCharge: "Rivalsa Marca da Bollo", bollo: "BOLLO", comp: "COMPENSO RICEVUTO", statement: "Dichiaro di aver ricevuto la somma sotto indicata quale compenso per prestazione occasionale eseguita per lo svolgimento del lavoro specificato:", footer: "- prestazione occasionale non professionale;\n- entro la franchigia di € 5.000;\n- fuori campo IVA (Art. 5 DPR 633/72).", pay: "Pagamento:", bolloID: "ID MARCA DA BOLLO:" },
-                en: { nr: "Receipt no.", del: "date", prestatore: "SENDER DETAILS", committente: "RECIPIENT", desc: "DESCRIPTION", importo: "AMOUNT", ritenuta: "Withholding tax", bolloCharge: "Stamp Duty Charge", bollo: "STAMP", comp: "NET RECEIVED", statement: "I declare to have received the sum indicated below as compensation for occasional performance carried out for the following work:", footer: "- occasional non-professional performance;\n- within the € 5,000 threshold;\n- exempt from VAT (Art. 5 DPR 633/72).", pay: "Pagamento:", bolloID: "STAMP ID:" }
-            }[lang];
-
-            doc.setFontSize(8); doc.setTextColor(150);
-            doc.text(labels.nr, 140, 20); doc.text(labels.del, 175, 20);
-            doc.setFontSize(12); doc.setTextColor(0); doc.setFont("helvetica", "bold");
-            doc.text(document.getElementById('numero').value || "1", 140, 28);
-            doc.text(document.getElementById('data').value || "---", 175, 28);
-
-            doc.setFontSize(8); doc.setTextColor(150);
-            doc.text(labels.prestatore, 20, 45); doc.text(labels.committente, 110, 45);
-            doc.setFontSize(10); doc.setTextColor(0); doc.setFont("helvetica", "normal");
-            doc.text(doc.splitTextToSize(document.getElementById('mittente').value, 70), 20, 52);
-            doc.setFont("helvetica", "bold");
-            doc.text(doc.splitTextToSize(document.getElementById('destinatario').value, 80), 110, 52);
-
-            doc.setFont("helvetica", "normal"); doc.setFontSize(9);
-            doc.text(doc.splitTextToSize(labels.statement, 170), 20, 85);
-
-            doc.setFillColor(245); doc.rect(20, 95, 170, 8, 'F');
-            doc.setFont("helvetica", "bold"); doc.text(labels.desc, 25, 100); doc.text(labels.importo, 185, 100, { align: "right" });
-            doc.setFont("helvetica", "normal");
-            doc.text(document.getElementById('descrizione').value || "Work", 25, 110);
-            doc.text(`€ ${lordo.toFixed(2)}`, 185, 110, { align: "right" });
-
-            doc.text(`${labels.ritenuta} ${(perc * 100).toFixed(0)}%`, 25, 130);
-            doc.text(`- € ${ritenuta.toFixed(2)}`, 185, 130, { align: "right" });
-
-            if (chargeBollo) {
-                doc.text(labels.bolloCharge, 25, 140);
-                doc.text(`+ € 2.00`, 185, 140, { align: "right" });
-            }
-
-            doc.line(20, 150, 190, 150);
-            doc.setFontSize(7); doc.text(doc.splitTextToSize(labels.footer, 100), 20, 160);
-
-            if (payVal) {
-                doc.setFontSize(8); doc.setFont("helvetica", "normal"); doc.text(labels.pay, 125, 160);
-                doc.setFont("helvetica", "bold"); doc.text(payVal, 125, 165);
-            }
-            if (bolloVal) {
-                doc.setFontSize(8); doc.setFont("helvetica", "normal"); doc.text(labels.bolloID, 125, 175);
-                doc.setFont("helvetica", "bold"); doc.text(bolloVal, 125, 180);
-            }
-
-            doc.setFillColor(252); doc.rect(120, 195, 70, 20, 'F');
-            doc.text(labels.comp, 145, 200); doc.setFontSize(16);
-            doc.text(`€ ${netto.toFixed(2)}`, 185, 210, { align: "right" });
-
-            doc.save(`Ritenuta d'acconto ${document.getElementById('numero').value}.pdf`);
-        }
-        function handleConsent(choice) {
-            localStorage.setItem('cookie_consent', choice);
-            document.getElementById('cookieBanner').classList.add('hidden');
-
-            if (choice === 'accepted') {
-                updateConsent('granted');
-            } else {
-                updateConsent('denied');
-            }
-        }
-
-        function updateConsent(status) {
-            gtag('consent', 'update', {
-                'analytics_storage': status
-            });
-        }
     </script>
     <div id="cookieBanner"
         class="hidden fixed bottom-6 left-6 right-6 md:left-auto md:w-96 bg-white border border-slate-200 shadow-2xl rounded-[2rem] p-6 z-[200] animate-bounce-subtle">
